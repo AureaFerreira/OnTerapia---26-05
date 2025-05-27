@@ -1,16 +1,22 @@
 {
   "expo": {
-    "name": "onterapia-app-migrado",
-    "slug": "onterapia-app-migrado",
+    "name": "onterapia-app",
+    "slug": "onterapia-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "name": "Seu App",
+      "slug": "seu-app",
+      "platforms": [
+        "ios",
+        "android"
+      ]
     },
     "ios": {
       "supportsTablet": true
@@ -20,10 +26,13 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "package": "com.anonymous.onterapiaapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
