@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
-import Header from '../../components/geral/Header';
+import Header from '../../../components/geral/Header';
 
 export default function ChatAnamnese() {
   const [mensagem, setMensagem] = useState('');

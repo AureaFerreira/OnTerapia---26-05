@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Header from '../../components/geral/Header';
+import Header from '../../../components/geral/Header';
 
-export default function MinhasDeclaracoes() {
+export default function Pacientes() {
   return (
     <View style={styles.container}>
-      <Header corFundo="#477BDE" />
-      <Text style={styles.titulo}>Minhas Declarações</Text>
+      <Header corFundo="#f43f5e" />
+      <Text style={styles.titulo}>Pacientes</Text>
     </View>
   );
 }
@@ -14,13 +14,13 @@ export default function MinhasDeclaracoes() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#f7f7f7',
   },
   titulo: {
     fontFamily: 'Poppins-Bold',
-    fontSize: 18,
-    textAlign: 'center',
+    fontSize: 20,
     color: '#1F2937',
-    marginTop: 10,
+    textAlign: 'center',
+    marginTop: 12,
   },
 });

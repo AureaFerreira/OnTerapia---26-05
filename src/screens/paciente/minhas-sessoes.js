@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Header from '../../components/geral/Header';
+import Header from '../../../components/geral/Header';
 
 export default function MinhasSessoes() {
   return (

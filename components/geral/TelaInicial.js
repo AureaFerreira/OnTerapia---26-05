@@ -8,13 +8,12 @@ export default function TelaInicial() {
 
   return (
     <LinearGradient
-    colors={['#477BDE', '#a5b4fc', '#f43f5e']}
-    style={styles.container}
-    start={{ x: 0.1, y: 0 }}
-    end={{ x: 0.9, y: 1 }}
-    locations={[0, 0.5, 1]} // <- este é o segredo!
+      colors={['#477BDE', '#a5b4fc', '#f43f5e']}
+      style={styles.container}
+      start={{ x: 0.1, y: 0 }}
+      end={{ x: 0.9, y: 1 }}
+      locations={[0, 0.5, 1]}
     >
-
       <Image
         source={require('../../assets/logo-onterapia.png')}
         style={styles.logo}

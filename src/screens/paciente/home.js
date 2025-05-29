@@ -1,4 +1,3 @@
-// src/screens/HomePaciente.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, Linking, Alert } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome5, Entypo } from '@expo/vector-icons';
@@ -68,9 +67,16 @@ export default function HomePaciente() {
     <View style={styles.container}>
       <LinearGradient colors={['#477BDE', '#2563eb']} style={styles.header}>
         <View style={styles.headerTop}>
+          {/* BOTÃO DE VOLTAR SEPARADO */}
           <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7}>
             <Ionicons name="chevron-back" size={28} color="white" />
-          </TouchableOpacity><Image source={require('../../assets/logo-onterapia.png')} style={styles.logo} /><TouchableOpacity onPress={toggleNotificationModal} style={styles.notificationIconContainer} activeOpacity={0.7}>
+          </TouchableOpacity>
+          
+          {/* LOGO DA ONTERAPIA - CAMINHO CORRIGIDO E ESTILO CORRETO */}
+          <Image source={require('../../../assets/logo-onterapia.png')} style={styles.logo} />
+          
+          {/* BOTÃO DE NOTIFICAÇÃO SEPARADO */}
+          <TouchableOpacity onPress={toggleNotificationModal} style={styles.notificationIconContainer} activeOpacity={0.7}>
             <Ionicons name="notifications" size={24} color="white" />
             {notificationCount > 0 && (
               <View style={styles.notificationBadge}>
@@ -87,13 +93,16 @@ export default function HomePaciente() {
         <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MinhasSessoes')} activeOpacity={0.7}>
           <FontAwesome5 name="heart" size={28} color="#f43f5e" />
           <Text style={styles.cardText}>Minhas Sessões</Text>
-        </TouchableOpacity><TouchableOpacity style={styles.card} onPress={() => navigation.navigate('ChatAnamnese')} activeOpacity={0.7}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('ChatAnamnese')} activeOpacity={0.7}>
           <MaterialIcons name="psychology" size={28} color="#f43f5e" />
           <Text style={styles.cardText}>Minha Anamnese</Text>
-        </TouchableOpacity><TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MeusAgendamentos')} activeOpacity={0.7}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MeusAgendamentos')} activeOpacity={0.7}>
           <Ionicons name="calendar-outline" size={28} color="#f43f5e" />
           <Text style={styles.cardText}>Meus Agendamentos</Text>
-        </TouchableOpacity><TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MinhasDeclaracoes')} activeOpacity={0.7}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MinhasDeclaracoes')} activeOpacity={0.7}>
           <Ionicons name="document-text-outline" size={28} color="#f43f5e" />
           <Text style={styles.cardText}>Minhas Declarações</Text>
         </TouchableOpacity>
@@ -102,12 +111,13 @@ export default function HomePaciente() {
       <View style={styles.sessionContainer}>
         <Text style={styles.sessionTitle}>Próxima sessão</Text>
         <TouchableOpacity style={styles.sessionCard} activeOpacity={0.7}>
-          <Image source={require('../../assets/logo-onterapia.png')} style={styles.sessionImage} />
+          {/* IMAGEM DO PSICÓLOGO NA SESSÃO - CAMINHO CORRIGIDO */}
+          <Image source={require('../../../assets/logo-onterapia.png')} style={styles.sessionImage} />
           <View style={styles.sessionInfo}>
             <Text style={styles.sessionName}>Dr. Psicólogo</Text>
             <View style={styles.sessionTags}>
               <MaterialIcons name="person" size={14} color="white" />
-              <Text style={styles.sessionText}> Terapeuta  •  Online</Text>
+              <Text style={styles.sessionText}> Terapeuta  •  Online</Text>
             </View>
             <Text style={styles.sessionStars}>⭐ 5.0</Text>
           </View>

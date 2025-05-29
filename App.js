@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import * as Font from 'expo-font';
 import * as Notifications from 'expo-notifications'; // Importado
 import * as SplashScreen from 'expo-splash-screen'; // Importado para substituir AppLoading
-import RootNavigation from './navigation';
+import RootNavigation from './src/navigation'; //
 
 // Permite que o splash screen fique visível até que as fontes sejam carregadas
 SplashScreen.preventAutoHideAsync();

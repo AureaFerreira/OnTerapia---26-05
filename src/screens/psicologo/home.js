@@ -1,40 +1,105 @@
 // src/screens/psicologo/HomePsicologo.js
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, Alert } from 'react-native';
 import { Ionicons, MaterialCommunityIcons, FontAwesome5, Entypo } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+
+// Importe o cliente Supabase do seu arquivo dedicado
+import { supabase } from '../../supabaseClient'; // AJUSTE O CAMINHO CONFORME ONDE VOCÊ SALVOU supabaseClient.js
 
 export default function HomePsicologo() {
   const navigation = useNavigation();
 
   const [isNotificationModalVisible, setNotificationModalVisible] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(2); // Exemplo: 2 notificações pendentes
-
-  const nextSession = {
-    patientName: 'Paciente Teste',
+  const [notificationCount, setNotificationCount] = useState(2);
+  const [userName, setUserName] = useState('...'); // Estado para o nome do usuário
+  const [nextSession, setNextSession] = useState({
+    patientName: 'Paciente Teste', // Pode ser buscado do Supabase também
     date: '27 de Maio',
     time: '21:00',
+  });
+
+  // Função para buscar o nome do usuário logado
+  const fetchUserName = async () => {
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+      if (userError) {
+        console.error('Erro ao obter usuário:', userError.message);
+        setUserName('Usuário'); // Fallback em caso de erro
+        return;
+      }
+
+      if (user) {
+        // Tenta buscar o nome da tabela 'Psicologo' primeiro
+        const { data: psicologoData, error: psicologoError } = await supabase
+          .from('Psicologo')
+          .select('nome')
+          .eq('id', user.id)
+          .single();
+
+        if (!psicologoError && psicologoData?.nome) {
+          setUserName(psicologoData.nome.split(' ')[0]); // Pega apenas o primeiro nome
+          return;
+        }
+
+        // Fallback para user_metadata (se o nome estiver lá)
+        if (user.user_metadata?.name) {
+          setUserName(user.user_metadata.name.split(' ')[0]);
+          return;
+        }
+
+        // Último fallback para o email (antes do @)
+        if (user.email) {
+          setUserName(user.email.split('@')[0]);
+          return;
+        }
+      }
+
+      setUserName('Usuário'); // Fallback final se nenhuma opção encontrar
+    } catch (error) {
+      console.error('Erro ao buscar nome:', error.message);
+      setUserName('Usuário');
+    }
   };
+
+  // useEffect para buscar o nome do usuário ao carregar e monitorar mudanças de autenticação
+  useEffect(() => {
+    fetchUserName(); // Busca o nome na montagem inicial
+
+    // Listener para mudanças de autenticação (login, logout, etc.)
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+        fetchUserName(); // Busca o nome novamente se o usuário entrar ou na sessão inicial
+      }
+    });
+
+    // Limpa o listener ao desmontar o componente
+    return () => authListener?.subscription?.unsubscribe();
+  }, []); // Array de dependências vazio para rodar apenas uma vez na montagem (e via listener)
 
   const toggleNotificationModal = () => {
     setNotificationModalVisible(!isNotificationModalVisible);
     if (notificationCount > 0) {
-      setNotificationCount(0); 
+      setNotificationCount(0); // Zera as notificações quando o modal é aberto
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Header com degradê real */}
+      {/* Header */}
       <LinearGradient colors={['#f43f5e', '#dc2626']} style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7}>
             <Ionicons name="chevron-back" size={28} color="white" />
-          </TouchableOpacity><Image
-            source={require('../../assets/logo-onterapia.png')}
+          </TouchableOpacity>
+          {/* Logo no cabeçalho - CAMINHO CORRIGIDO */}
+          <Image
+            source={require('../../../assets/logo-onterapia.png')}
             style={styles.logo}
-          /><TouchableOpacity onPress={toggleNotificationModal} style={styles.notificationIconContainer} activeOpacity={0.7}>
+          />
+          <TouchableOpacity onPress={toggleNotificationModal} style={styles.notificationIconContainer} activeOpacity={0.7}>
             <Ionicons name="notifications" size={24} color="white" />
             {notificationCount > 0 && (
               <View style={styles.notificationBadge}>
@@ -43,7 +108,8 @@ export default function HomePsicologo() {
             )}
           </TouchableOpacity>
         </View>
-        <Text style={styles.title}>Olá!</Text>
+        {/* Usando o userName buscado do Supabase */}
+        <Text style={styles.title}>Olá, {userName}!</Text>
         <Text style={styles.subtitle}>Pronto para a sessão?</Text>
       </LinearGradient>
 
@@ -56,74 +122,68 @@ export default function HomePsicologo() {
         >
           <Ionicons name="people-circle-outline" size={28} color="#477BDE" />
           <Text style={styles.cardText}>Pacientes</Text>
-        </TouchableOpacity><TouchableOpacity
+        </TouchableOpacity>
+
+        <TouchableOpacity
           style={styles.card}
           onPress={() => navigation.navigate('Prontuarios')}
           activeOpacity={0.7}
         >
           <MaterialCommunityIcons name="notebook-outline" size={28} color="#477BDE" />
           <Text style={styles.cardText}>Prontuários</Text>
-        </TouchableOpacity><TouchableOpacity
+        </TouchableOpacity>
+
+        <TouchableOpacity
           style={styles.card}
           onPress={() => navigation.navigate('EvolucaoCasos')}
           activeOpacity={0.7}
         >
           <FontAwesome5 name="chart-line" size={28} color="#477BDE" />
           <Text style={styles.cardText}>Evolução de Casos</Text>
-        </TouchableOpacity><TouchableOpacity
+        </TouchableOpacity>
+
+        <TouchableOpacity
           style={styles.card}
           onPress={() => navigation.navigate('IniciarSessao')}
           activeOpacity={0.7}
         >
           <Ionicons name="videocam-outline" size={28} color="#477BDE" />
           <Text style={styles.cardText}>Iniciar Sessão</Text>
-        </TouchableOpacity><TouchableOpacity
+        </TouchableOpacity>
+
+        <TouchableOpacity
           style={styles.card}
-          onPress={() => navigation.navigate('RoleSelect')}
+          onPress={() => navigation.navigate('PersonalizarAnamnese')} // Mudei para cadastrar paciente
           activeOpacity={0.7}
         >
-          <FontAwesome5 name="user-tag" size={28} color="#477BDE" />
-          <Text style={styles.cardText}>Escolher Papel</Text>
-        </TouchableOpacity><TouchableOpacity
+          <Ionicons name="create-outline" size={28} color="#477BDE" /> {/* Ícone de criar/editar */}
+          <Text style={styles.cardText}>Cadastrar Paciente</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           style={styles.card}
-          onPress={() =>
-            navigation.navigate('LinkScreen', {
-              role: 'Psicólogo',
-              roomName: 'SalaDeTeste',
-            })
-          }
+          onPress={() => navigation.navigate('Declaracoes')}
           activeOpacity={0.7}
         >
-          <MaterialCommunityIcons name="link-variant" size={28} color="#477BDE" />
-          <Text style={styles.cardText}>Link da Sala</Text>
-        </TouchableOpacity><TouchableOpacity
-          style={styles.card}
-          onPress={() =>
-            navigation.navigate('VideoCall', {
-              role: 'Psicólogo',
-              roomName: 'SalaDeTeste',
-            })
-          }
-          activeOpacity={0.7}
-        >
-          <Ionicons name="videocam-outline" size={28} color="#477BDE" />
-          <Text style={styles.cardText}>Chamada de Vídeo</Text>
+          <Ionicons name="document-text-outline" size={28} color="#477BDE" />
+          <Text style={styles.cardText}>Declarações</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Próxima sessão (exemplo de dados estáticos para a seção de baixo) */}
+      {/* Próxima sessão */}
       <View style={styles.sessionContainer}>
         <Text style={styles.sessionTitle}>Próxima sessão</Text>
         <TouchableOpacity style={styles.sessionCard} activeOpacity={0.7}>
+          {/* Imagem do paciente na sessão - CAMINHO CORRIGIDO */}
           <Image
-            source={require('../../assets/logo-onterapia.png')} // Usando logo como placeholder
+            source={require('../../../assets/logo-onterapia.png')} // Usando logo como placeholder
             style={styles.sessionImage}
           />
           <View style={styles.sessionInfo}>
-            <Text style={styles.sessionName}>Paciente</Text>
+            <Text style={styles.sessionName}>{nextSession.patientName}</Text>
             <View style={styles.sessionTags}>
               <Entypo name="calendar" size={14} color="white" />
-              <Text style={styles.sessionText}> 24 de Abril • 15:00</Text>
+              <Text style={styles.sessionText}> {nextSession.date} • {nextSession.time}</Text>
             </View>
             <Text style={styles.sessionStars}>⭐ 5.0</Text>
           </View>
@@ -143,8 +203,8 @@ export default function HomePsicologo() {
         visible={isNotificationModalVisible}
         onRequestClose={toggleNotificationModal}
       >
-        <TouchableOpacity 
-          style={styles.modalOverlay} 
+        <TouchableOpacity
+          style={styles.modalOverlay}
           activeOpacity={1}
           onPressOut={toggleNotificationModal}
         >

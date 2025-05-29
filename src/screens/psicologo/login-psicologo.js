@@ -36,7 +36,7 @@ export default function LoginPsicologo() {
       </TouchableOpacity>
 
       <Image
-        source={require('../../assets/logo-onterapia.png')}
+        source={require('../../../assets/logo-onterapia.png')}
         style={styles.logo}
       />
       <Text style={styles.title}>OnTerapia</Text>
